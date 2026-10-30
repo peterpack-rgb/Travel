@@ -16,7 +16,7 @@
 #journalMap .leaflet-control-attribution a{display:inline;background:none;width:auto;height:auto;line-height:inherit}
 #journalMap .leaflet-popup{position:absolute;text-align:center;margin-bottom:20px}#journalMap .leaflet-popup-content-wrapper{background:#fff;color:#222;border-radius:10px;padding:8px;box-shadow:0 2px 12px #0004}
 #journalMap .leaflet-popup-content{margin:8px}#journalMap .leaflet-popup-close-button{position:absolute;right:5px;top:2px;z-index:2}
-</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyo4r9Gzv+H1rNfWw=" crossorigin=""><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script></head><body><header><h1>✈ MyTravel <span class="pill">V1.4.4</span></h1><p>Your personal travel organiser · Plans, documents and holiday memories</p></header><main class="shell"><nav id="nav"></nav><div id="views"></div></main><dialog id="editor"><div class="toolbar"><h2 id="editorTitle">Add item</h2><button onclick="document.getElementById('editor').close()">✕</button></div><form id="editForm"><div id="fields" class="formgrid"></div><div class="formactions"><button type="submit" class="primary">Save</button><button type="button" onclick="document.getElementById('editor').close()">Cancel</button></div></form></dialog><div id="toast" role="status"></div><input type="file" id="importFile" accept=".json,application/json" hidden><dialog id="journalEditor"><div class="toolbar"><h2 id="journalEditorTitle">Holiday diary entry</h2><button type="button" onclick="document.getElementById('journalEditor').close()">✕</button></div><form id="journalForm"><div class="formgrid"><div class="field"><label>Place / title</label><input name="title" required maxlength="180"></div><div class="field"><label>Date</label><input name="date" type="date" required></div><div class="field"><label>Latitude (optional)</label><input name="lat" type="number" step="any" min="-90" max="90"></div><div class="field"><label>Longitude (optional)</label><input name="lon" type="number" step="any" min="-180" max="180"></div><div class="field wide"><label>Diary notes</label><textarea name="notes" placeholder="What did you see and do?"></textarea></div><div class="field wide"><label>Photograph (optional)</label><input id="journalImage" type="file" accept="image/*"><small>Photos are compressed before saving. Large collections may need a dedicated photo-storage service later.</small></div><div class="field wide" id="journalPhotoPreview"></div></div><div class="formactions"><button type="submit" class="primary">Save diary entry</button><button type="button" onclick="document.getElementById('journalEditor').close()">Cancel</button></div></form></dialog>
+</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyo4r9Gzv+H1rNfWw=" crossorigin=""><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script></head><body><header><h1>✈ MyTravel <span class="pill">V1.4.5</span></h1><p>Your personal travel organiser · Plans, documents and holiday memories</p></header><main class="shell"><nav id="nav"></nav><div id="views"></div></main><dialog id="editor"><div class="toolbar"><h2 id="editorTitle">Add item</h2><button onclick="document.getElementById('editor').close()">✕</button></div><form id="editForm"><div id="fields" class="formgrid"></div><div class="formactions"><button type="submit" class="primary">Save</button><button type="button" onclick="document.getElementById('editor').close()">Cancel</button></div></form></dialog><div id="toast" role="status"></div><input type="file" id="importFile" accept=".json,application/json" hidden><dialog id="journalEditor"><div class="toolbar"><h2 id="journalEditorTitle">Holiday diary entry</h2><button type="button" onclick="document.getElementById('journalEditor').close()">✕</button></div><form id="journalForm"><div class="formgrid"><div class="field"><label>Place / title</label><input name="title" required maxlength="180"></div><div class="field"><label>Date</label><input name="date" type="date" required></div><div class="field"><label>Latitude (optional)</label><input name="lat" type="number" step="any" min="-90" max="90"></div><div class="field"><label>Longitude (optional)</label><input name="lon" type="number" step="any" min="-180" max="180"></div><div class="field wide"><label>Diary notes</label><textarea name="notes" placeholder="What did you see and do?"></textarea></div><div class="field wide"><label>Photograph (optional)</label><input id="journalImage" type="file" accept="image/*"><small>Photos are compressed before saving. Large collections may need a dedicated photo-storage service later.</small></div><div class="field wide" id="journalPhotoPreview"></div></div><div class="formactions"><button type="submit" class="primary">Save diary entry</button><button type="button" onclick="document.getElementById('journalEditor').close()">Cancel</button></div></form></dialog>
 <script>
 'use strict';const KEY='mytravel-v1-data',UNDO_KEY='mytravel-v1-last-deletion',CLOUD_CONFIG='mytravel-cloud-config-v1',CLOUD_PENDING='mytravel-cloud-pending-v1',CLOUD_BASELINE='mytravel-cloud-baseline-v1';const tabs=[['dashboard','Dashboard'],['trips','Trips'],['itinerary','Itinerary'],['journal','Holiday Journal'],['stays','Accommodation'],['transport','Transport'],['vaccines','Vaccinations'],['documents','Documents'],['packing','Packing'],['expenses','Expenses'],['settings','Settings']];
 const schemas={trips:[['name','Trip name','text',true],['destination','Destination','text',true],['start','Departure date','date'],['end','Return date','date'],['notes','Notes','textarea']],itinerary:[['date','Date','date'],['time','Time','time'],['title','Activity / place','text',true],['location','Location','text'],['details','Details / booking reference','textarea']],stays:[['name','Hotel / accommodation','text',true],['location','Location','text'],['checkin','Check-in','date'],['checkout','Check-out','date'],['reference','Booking reference','text'],['notes','Notes','textarea']],transport:[['type','Transport type','select',false,['Flight','Train','Car','Bus','Taxi','Other']],['provider','Airline / provider','text'],['from','From','text'],['to','To','text'],['date','Departure date','date'],['time','Departure time','time'],['reference','Booking reference','text'],['notes','Notes','textarea']],vaccines:[['name','Vaccine / medication','text',true],['date','Date received','date'],['dose','Dose / course','text'],['next','Next dose / booster date','date'],['provider','Clinic / provider','text'],['notes','Notes','textarea']],documents:[['name','Document name','text',true],['reference','Reference / number (optional)','text'],['expiry','Expiry date','date'],['location','Where stored','text'],['notes','Notes','textarea']],packing:[['name','Item','text',true],['category','Category','select',false,['Essentials','Clothing','Electronics','Toiletries','Medication','Other']],['notes','Notes','text']],expenses:[['name','Expense','text',true],['amount','Amount','number'],['currency','Currency','select',false,['GBP','INR','USD','EUR','Other']],['date','Date','date'],['category','Category','select',false,['Flights','Hotels','Transport','Food','Activities','Other']],['notes','Notes','textarea']]};
@@ -77,7 +77,7 @@ function deleteJournal(id){const x=(data.journal||[]).find(z=>z.id===id&&z.tripI
 let sb=null,cloudUser=null,cloudEnabled=false,cloudBusy=false,cloudTimer=null,cloudRevision=null,cloudLastSnapshot=null,cloudConfig=null,cloudMessage='Cloud not connected.',cloudMessageClass='';
 try{cloudConfig=JSON.parse(localStorage.getItem(CLOUD_CONFIG)||'null')}catch(e){}
 function cloudStatus(msg,cls=''){cloudMessage=msg;cloudMessageClass=cls;const el=document.getElementById('cloudStatus');if(el){el.textContent=msg;el.className=cls}const b=document.getElementById('cloudBanner');if(b)b.textContent=msg;}
-function cloudSettingsHtml(){return `<div class="card"><h3>☁ Supabase synchronisation</h3><p class="muted">Use the same Supabase project as MyFinance if you wish, but create the separate <code>mytravel_data</code> table first (see the supplied setup guide). Your existing records stay on this device until you explicitly upload them.</p><div class="formgrid"><div class="field"><label>Supabase Project URL</label><input id="travelSbUrl" type="url" placeholder="https://your-project.supabase.co" value="${esc(cloudConfig?.url||'')}"></div><div class="field"><label>Publishable / anon key (never a secret or service-role key)</label><input id="travelSbKey" type="text" autocomplete="off" value="${esc(cloudConfig?.key||'')}"></div></div><div class="cloudactions"><button onclick="connectCloud()">Connect</button><button onclick="signInCloud()">Sign in</button><button onclick="signOutCloud()">Sign out</button></div><p id="cloudStatus" class="${cloudMessageClass||'muted'}">${esc(cloudMessage)}</p><div class="notice"><strong>First setup on your PC:</strong> Download a JSON backup, connect and sign in, then choose <strong>Upload this device to cloud</strong>. On your iPad/iPhone, sign in and choose <strong>Load cloud onto this device</strong>. Never upload an empty device.</div><div class="cloudactions" style="margin-top:12px"><button class="primary" onclick="uploadCloud(true)">↑ Upload this device to cloud</button><button onclick="downloadCloud(true)">↓ Load cloud onto this device</button><button onclick="checkCloud()">Check for cloud changes</button></div><p class="muted">After the first upload or download, edits on this device sync automatically while signed in. Independent new Holiday Journal entries are merged safely when other travel records match; conflicting edits or changes to other travel information still require review. The app checks for updates every 30 seconds and when reopened. Unsaved or conflicting changes are never silently overwritten. If changes conflict, the app stops and asks you to choose which copy to keep.</p></div>`}
+function cloudSettingsHtml(){return `<div class="card"><h3>☁ Supabase synchronisation</h3><p class="muted">Use the same Supabase project as MyFinance if you wish, but create the separate <code>mytravel_data</code> table first (see the supplied setup guide). Your existing records stay on this device until you explicitly upload them.</p><div class="formgrid"><div class="field"><label>Supabase Project URL</label><input id="travelSbUrl" type="url" placeholder="https://your-project.supabase.co" value="${esc(cloudConfig?.url||'')}"></div><div class="field"><label>Publishable / anon key (never a secret or service-role key)</label><input id="travelSbKey" type="text" autocomplete="off" value="${esc(cloudConfig?.key||'')}"></div></div><div class="cloudactions"><button onclick="connectCloud()">Connect</button><button onclick="signInCloud()">Sign in</button><button onclick="signOutCloud()">Sign out</button></div><p id="cloudStatus" class="${cloudMessageClass||'muted'}">${esc(cloudMessage)}</p><div class="notice"><strong>First setup on your PC:</strong> Download a JSON backup, connect and sign in, then choose <strong>Upload this device to cloud</strong>. On your iPad/iPhone, sign in and choose <strong>Load cloud onto this device</strong>. Never upload an empty device.</div><div class="cloudactions" style="margin-top:12px"><button class="primary" onclick="uploadCloud(true)">↑ Upload this device to cloud</button><button onclick="downloadCloud(true)">↓ Load cloud onto this device</button><button onclick="checkCloud()">Check for cloud changes</button></div><p class="muted">After the first upload or download, edits on this device sync automatically while signed in. Independent additions and non-conflicting edits are merged by record ID when a common sync baseline exists. Conflicting changes are paused for review. The app checks for updates every 30 seconds and when reopened. Unsaved or conflicting changes are never silently overwritten. If changes conflict, the app stops and asks you to choose which copy to keep.</p></div>`}
 function cloudChanged(){if(!cloudEnabled||!cloudUser||!sb)return;try{localStorage.setItem(CLOUD_PENDING,'1')}catch(e){}clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>uploadCloud(false),900)}
 function validCloudSettings(url,key){return /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)&&!!key&&!/service_role|sb_secret_/i.test(key)}
 async function connectCloud(){const url=(document.getElementById('travelSbUrl')?.value||cloudConfig?.url||'').trim().replace(/\/$/,''),key=(document.getElementById('travelSbKey')?.value||cloudConfig?.key||'').trim();if(!validCloudSettings(url,key)){cloudStatus('Enter your Supabase project URL and PUBLIC publishable/anon key.','syncerr');return}if(!window.supabase){cloudStatus('Supabase library could not load. Check internet access.','syncerr');return}cloudConfig={url,key};localStorage.setItem(CLOUD_CONFIG,JSON.stringify(cloudConfig));sb=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'mytravel-auth-v1'}});sb.auth.onAuthStateChange((event,session)=>{const prior=cloudUser?.id;cloudUser=session?.user||null;if(!cloudUser){cloudEnabled=false;cloudRevision=null;cloudLastSnapshot=null;cloudStatus('Signed out — local records are still here.');return}cloudStatus('Signed in. Checking cloud data…');if(event==='SIGNED_IN'&&prior!==cloudUser.id)setTimeout(()=>initialCloudCheck(),0)});try{const {data:auth,error}=await sb.auth.getSession();if(error)throw error;if(auth.session?.user){cloudUser=auth.session.user;await initialCloudCheck()}else cloudStatus('Connected. Sign in to sync.')}catch(e){cloudStatus('Connection error: '+e.message,'syncerr')}}
@@ -92,48 +92,75 @@ function rememberBaseline(){if(!cloudUser)return;try{localStorage.setItem(CLOUD_
 function restoreBaseline(){try{const x=JSON.parse(localStorage.getItem(CLOUD_BASELINE)||'null');if(x?.id===baselineId()&&typeof x.snapshot==='string'){cloudRevision=x.revision;cloudLastSnapshot=x.snapshot;return true}}catch(e){}cloudRevision=null;cloudLastSnapshot=null;return false}
 
 async function cloudRow(){if(!sb||!cloudUser)throw Error('Sign in first');const {data:row,error}=await sb.from('mytravel_data').select('data,revision').eq('user_id',cloudUser.id).maybeSingle();if(error)throw error;return row}
-// V1.4.4: merge independent journal additions only. Never guess about
-// changed itinerary/other records, edited entries or deletions.
-function mergeJournalOnly(localData,remoteData){
+// V1.4.5: compare record collections by ID (not array order), and perform
+// three-way merges when a verified common cloud baseline is available.
+function sameRecords(a,b){
+ if(!Array.isArray(a)||!Array.isArray(b))return stable(a)===stable(b);
+ const sorted=x=>[...x].sort((m,n)=>String(m.id||'').localeCompare(String(n.id||'')));
+ return stable(sorted(a))===stable(sorted(b));
+}
+function mergeTravel(localData,remoteData){
  const l={...blank(),...localData},r={...blank(),...remoteData};
- for(const key of Object.keys(blank())){
-   if(key==='journal')continue;
-   if(stable(l[key])!==stable(r[key]))return {error:'Other travel information also differs. No automatic merge was attempted.'};
- }
- const a=Array.isArray(l.journal)?l.journal:[],b=Array.isArray(r.journal)?r.journal:[];
- const lm=new Map(a.map(x=>[x.id,x])),rm=new Map(b.map(x=>[x.id,x]));
- if(lm.size!==a.length||rm.size!==b.length||a.some(x=>!x.id)||b.some(x=>!x.id))return {error:'Some diary entries lack unique identifiers.'};
- for(const [id,x] of lm){if(rm.has(id)&&stable(x)!==stable(rm.get(id)))return {error:'A diary entry was edited differently on two devices. Manual review is needed.'}}
- // If we have a common baseline, a missing previously synced entry could be a deletion.
- // Do not restore it accidentally by combining both copies.
- try{
-   const base=JSON.parse(cloudLastSnapshot||'null');
-   if(base&&Array.isArray(base.journal))for(const x of base.journal){
-     if(!lm.has(x.id)||!rm.has(x.id))return {error:'A previously synced diary entry was removed on one device. Manual review is needed.'};
-   }
+ let base=null;
+ try{const stored=JSON.parse(localStorage.getItem(CLOUD_BASELINE)||'null');
+   if(stored?.id===baselineId()&&typeof stored.snapshot==='string')base={...blank(),...JSON.parse(stored.snapshot)};
  }catch(e){}
- const combined=[...b,...a.filter(x=>!rm.has(x.id))];
- return {data:{...r,journal:combined},added:combined.length-b.length};
+ const result={...r};
+ for(const key of Object.keys(blank())){
+   if(key==='activeTrip'){
+     if(l[key]===r[key])continue;
+     if(base&&l[key]===base[key])continue;
+     if(base&&r[key]===base[key]){result[key]=l[key];continue}
+     return {error:'The selected trip differs on both devices. Please review the copies.'};
+   }
+   const la=Array.isArray(l[key])?l[key]:[],ra=Array.isArray(r[key])?r[key]:[];
+   if(sameRecords(la,ra))continue;
+   const ba=base&&Array.isArray(base[key])?base[key]:null;
+   if(ba&&sameRecords(la,ba))continue;
+   if(ba&&sameRecords(ra,ba)){result[key]=la;continue}
+   const lm=new Map(la.map(x=>[x.id,x])),rm=new Map(ra.map(x=>[x.id,x]));
+   if(lm.size!==la.length||rm.size!==ra.length||la.some(x=>!x.id)||ra.some(x=>!x.id))return {error:'Invalid or duplicate identifiers in '+key+'.'};
+   const bm=new Map((ba||[]).map(x=>[x.id,x]));
+   const merged=[];
+   for(const id of new Set([...rm.keys(),...lm.keys(),...bm.keys()])){
+     const lv=lm.get(id),rv=rm.get(id),bv=bm.get(id);
+     if(bv){
+       const lc=lv===undefined?'deleted':stable(lv)===stable(bv)?'unchanged':'edited';
+       const rc=rv===undefined?'deleted':stable(rv)===stable(bv)?'unchanged':'edited';
+       if(lc==='unchanged'){if(rv!==undefined)merged.push(rv);continue}
+       if(rc==='unchanged'){if(lv!==undefined)merged.push(lv);continue}
+       if(lc==='deleted'&&rc==='deleted')continue;
+       if(lc==='edited'&&rc==='edited'&&stable(lv)===stable(rv)){merged.push(lv);continue}
+       return {error:'Conflicting edits or deletion in '+key+'. No data was overwritten.'};
+     }
+     if(lv&&rv&&stable(lv)!==stable(rv))return {error:'Different versions of a new '+key+' record. No data was overwritten.'};
+     if(lv||rv)merged.push(lv||rv);
+   }
+   // Without a shared baseline, disjoint additions can merge, but a missing
+   // record could be a deletion; stop instead of resurrecting deleted data.
+   if(!base&&key!=='journal'&&la.length&&ra.length&&la.some(x=>!rm.has(x.id))&&ra.some(x=>!lm.has(x.id)))
+     return {error:'No common baseline for differing '+key+' records. Please review before merging.'};
+   if(!base&&key==='journal'&&la.length&&ra.length){
+     // Only combine independent additions when all shared entries are identical.
+     // Without a baseline, removals cannot be distinguished from new additions.
+     if(la.some(x=>!rm.has(x.id))&&ra.some(x=>!lm.has(x.id)))return {error:'Diary entries differ on both devices without a common baseline.'};
+   }
+   result[key]=merged;
+ }
+ return {data:result};
 }
 async function reconcileJournal(row){
  if(cloudBusy)return false;
- cloudBusy=true;
- try{
- const merged=mergeJournalOnly(data,row.data);
+ const merged=mergeTravel(data,row.data);
  if(!merged.data){cloudEnabled=false;cloudStatus('Automatic merge paused: '+merged.error+' Your data is safe.','syncwarn');return false}
- const old=JSON.stringify(data);
- try{localStorage.setItem(KEY,JSON.stringify(merged.data))}catch(e){cloudStatus('Cannot save combined diary locally. Nothing was uploaded.','syncerr');return false}
- data=merged.data;render();
- cloudRevision=row.revision;cloudLastSnapshot=stable(row.data);cloudEnabled=true;
- if(stable(data)===cloudLastSnapshot){rememberBaseline();localStorage.removeItem(CLOUD_PENDING);cloudStatus('Diary entries combined. Cloud up to date.','syncok');return true}
- cloudStatus('Combining diary entries safely…','syncwarn');
- cloudBusy=false;
+ const combined=stable(merged.data),remote=stable(row.data);
+ try{localStorage.setItem(KEY,JSON.stringify(merged.data))}catch(e){cloudStatus('Cannot save merged records locally. Nothing was uploaded.','syncerr');return false}
+ data=merged.data;render();cloudRevision=row.revision;cloudLastSnapshot=remote;cloudEnabled=true;
+ if(combined===remote){rememberBaseline();localStorage.removeItem(CLOUD_PENDING);cloudStatus('Cloud up to date.','syncok');return true}
+ cloudStatus('Uploading safely merged records…','syncwarn');
  await uploadCloud(false);
- if(!cloudEnabled){ // Keep combined entries locally; the next check can retry.
-   cloudStatus('Combined diary saved locally, but cloud upload needs attention. Check for cloud changes.','syncwarn');return false;
- }
- cloudStatus('Diary entries merged and synchronised.','syncok');return true;
- }finally{cloudBusy=false}
+ if(cloudLastSnapshot===snapshot()){cloudStatus('All compatible changes merged and synchronised.','syncok');return true}
+ cloudStatus('Merged locally. Cloud upload requires another check; no records were discarded.','syncwarn');return false;
 }
 async function initialCloudCheck(){
  if(!sb||!cloudUser||cloudBusy)return;
